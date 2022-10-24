@@ -1,10 +1,14 @@
 #include "construction.hh"
 #include "MagLensTabulatedField3D.hh"
 #include<cmath>
+#include"detector.hh"
+
+ #define MAG 1
 
 MyDetectorConstruction::MyDetectorConstruction() 
 {
   fField.Put(0);
+ 
 }
 MyDetectorConstruction::~MyDetectorConstruction() 
 {}
@@ -42,7 +46,7 @@ G4VPhysicalVolume* MyDetectorConstruction::Construct()
     G4Material *gammaShield = new G4Material("gammaShield",16.8*g/cm3,2);
     gammaShield->AddElement(Ta,97.5*perCent);
     gammaShield->AddElement(W,2.5*perCent);
-    G4Cons *shield = new G4Cons("shield",0.3*cm,1*cm,0.3*cm,0.5*cm,1.25*cm,0.*deg,360.*deg);
+    G4Cons *shield = new G4Cons("shield",0.3*cm,2.42*cm,0.3*cm,1.16*cm,1.5*cm,0.*deg,360.*deg);
     G4LogicalVolume *logicShield = new G4LogicalVolume(shield,gammaShield,"logicShield");
     G4VPhysicalVolume *physShield = new G4PVPlacement(0,G4ThreeVector(0.,0.,0.),logicShield,"physShield",logicWorld,false,0,true);
 
@@ -50,7 +54,7 @@ G4VPhysicalVolume* MyDetectorConstruction::Construct()
     G4Element *Sn = nist->FindOrBuildElement("Sn");
     G4Material *xrayShield1 = new G4Material("xrayShield1",5.75*g/cm3,1);
     xrayShield1->AddElement(Sn, 100*perCent);
-    G4Tubs *xrayVol1 = new G4Tubs("xrayVol1",0.3*cm,1*cm,0.2*cm,0.,360.*deg);
+    G4Tubs *xrayVol1 = new G4Tubs("xrayVol1",0.3*cm,1*cm,0.05*cm,0.,360.*deg);
     G4LogicalVolume *logicxrayShield1 = new G4LogicalVolume(xrayVol1,xrayShield1,"logicxrayShield1");
     G4VPhysicalVolume *physxrayShield1 = new G4PVPlacement(0,G4ThreeVector(0.,0.,-1.45*cm),logicxrayShield1,"physxrayShield1",logicWorld,false,0,true);
     
@@ -60,48 +64,31 @@ G4VPhysicalVolume* MyDetectorConstruction::Construct()
     xrayShield2->AddElement(Cu, 100*perCent);
     G4Tubs *xrayVol2 = new G4Tubs("xrayVol2",0.3*cm,1*cm,0.05*cm,0.,360.*deg);
     G4LogicalVolume *logicxrayShield2 = new G4LogicalVolume(xrayVol2,xrayShield2,"logicxrayShield2");
-    G4VPhysicalVolume *physxrayShield2 = new G4PVPlacement(0,G4ThreeVector(0.,0.,-1.5*cm),logicxrayShield2,"physxrayShield2",logicWorld,false,0,true);
+    G4VPhysicalVolume *physxrayShield2 = new G4PVPlacement(0,G4ThreeVector(0.,0.,-1.6*cm),logicxrayShield2,"physxrayShield2",logicWorld,false,0,true);
 
 
     //Detector
     G4Element *Si = nist->FindOrBuildElement("Si");
     G4Material *detectorMat = new G4Material("detectorMat",2.32*g/cm3,1);
     detectorMat->AddElement(Si, 100*perCent);
-    G4Tubs* solidDetector = new G4Tubs("solidDetector", 0.*cm, 1.1*cm,0.1*cm,0.,360.*deg); //Box to Tub
-    G4LogicalVolume* logicDetector = new G4LogicalVolume(solidDetector, detectorMat, "logicDetector");
+    G4Tubs* solidDetector = new G4Tubs("solidDetector", 0.8*cm, 4.8*cm,0.1*cm,0.,360.*deg); //Box to Tub
+    logicDetector = new G4LogicalVolume(solidDetector, detectorMat, "logicDetector");
 
-    for(G4int i=0; i<5; i++)
-    { 
-      G4float phi = i*(2*M_PI/5);
-     G4VPhysicalVolume* physDetector = new G4PVPlacement(0,G4ThreeVector(1.9*cos(phi)*cm,1.9*sin(phi)*cm,-5.75*cm ),
-               logicDetector, "physDetector",logicWorld, false,i,true);
-    }
+  
+     G4VPhysicalVolume* physDetector = new G4PVPlacement(0,G4ThreeVector(0.*cm,0.*cm,-7.2*cm ),
+               logicDetector, "physDetector",logicWorld, false,0,true);
     
-       // for (G4int i = 0; i < 4; i++) {
-         //   G4float r = (((0.01 + (i + 1) * 0.08) + (0.01 + i * 0.08)) / 2);
-           //  for (G4int j = 0; j < 8; j++) {
-             //    G4float phi = (M_PI/8 + (j * M_PI/4));
-
-               //G4VPhysicalVolume* physDetector = new G4PVPlacement(0, G4ThreeVector(0,0,-5.75*cm ),
-             //  logicDetector, "physDetector",logicWorld, false, i*10 + j, true);
-            // }
-        // } 
-
-       
+      
 
     return physWorld;
 }
 
-/*
-void MyDetectorConstruction::ConstructSDandField() {
 
-    MySensitiveDetector* sensDet = new MySensitiveDetector("SensitiveDetector");
-    logicDetector->SetSensitiveDetector(sensDet);
-}*/
 
 void MyDetectorConstruction::ConstructSDandField() {
+#if MAG
   if (fField.Get() == 0) {
-    G4MagneticField* MagneticLens = new MagLensTabulatedField3D("/Users/rocky/np/tproto/data120_20_40.TABLE");
+    G4MagneticField* MagneticLens = new MagLensTabulatedField3D("/Users/rocky/np/fourproto/data120_20_40.TABLE");
 
     fField.Put(MagneticLens);
 
@@ -111,4 +98,9 @@ void MyDetectorConstruction::ConstructSDandField() {
     FieldMgr->SetDetectorField(fField.Get());
     FieldMgr->CreateChordFinder(fField.Get());
   }
-}
+#endif
+  MySensitiveDetector *sensDet = new MySensitiveDetector("SensitiveDetector");
+
+  logicDetector->SetSensitiveDetector(sensDet);
+  
+  }

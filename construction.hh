@@ -3,7 +3,7 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4SystemofUnits.hh"
+#include "G4SystemOfUnits.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Cons.hh"
@@ -32,11 +32,12 @@
 #include "G4CashKarpRKF45.hh"
 #include "G4RKG3_Stepper.hh"
 
+
 class MyDetectorConstruction : public G4VUserDetectorConstruction
 {
 private:
     /* data */
-    //G4LogicalVolume *logicDetector;
+    G4LogicalVolume *logicDetector;
     //virtual void ConstructSDandField();
     G4Cache<G4MagneticField*> fField;
 

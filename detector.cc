@@ -1,33 +1,35 @@
 #include"detector.hh"
+#include <fstream>
+#include <iostream>
+#include <string>
+
+int countDetect = 0;
 
 MySensitiveDetector::MySensitiveDetector(G4String name) : G4VSensitiveDetector(name)
 {}
 
 MySensitiveDetector::~MySensitiveDetector()
-{}
+{
+   std::cout << "Hello" << std::endl;
+   std::ofstream outfile;
+   outfile.open("/Users/rocky/np/fourproto/outputlog.txt");
+   outfile << countDetect << std::endl;
+   outfile.close();
+}
 
-G4bool MySensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist)
+
+G4bool MySensitiveDetector::ProcessHits(G4Step *step, G4TouchableHistory *)
 {
 
-	G4Track* track = aStep->GetTrack();
+   G4Track *track = step->GetTrack();
+   track->SetTrackStatus(fStopAndKill);
 
-	track->SetTrackStatus(fStopAndKill);
+   G4TouchableHandle touchable = step->GetPreStepPoint()->GetTouchableHandle();
+   G4int copyNo = touchable->GetVolume(0)->GetCopyNo();
 
-	G4StepPoint *preStepPoint = aStep->GetPreStepPoint();
-	G4StepPoint *postStepPoint = aStep->GetPostStepPoint();
-
-	G4ThreeVector posPhoton = preStepPoint->GetPosition();
-
-	// G4cout << "Phton position: " << posPhoton << G4endl;
-
-	const G4VTouchable* touchable = aStep->GetPreStepPoint()->GetTouchable();
-
-	G4int copyNo = touchable->GetCopyNumber();
-	
-	// G4cout << "Copy number: " << copyNo << G4endl;
-
-	G4VPhysicalVolume* physVol = touchable->GetVolume();
-	G4ThreeVector posDetector = physVol->GetTranslation();
-
-	G4cout << "Detector position: " << posDetector << G4endl;
+   G4double edep = step->GetTotalEnergyDeposit();  
+   //G4cout << "Energy is:" << edep << G4endl;
+   countDetect += 1;
+   G4cout << countDetect << G4endl;
+   return true;
 }

@@ -7,11 +7,11 @@ class MySensitiveDetector : public G4VSensitiveDetector
 {
 
 public:
-	MySensitiveDetector(G4String);
+	MySensitiveDetector(G4String SDname);
 	~MySensitiveDetector();
 
-private:
-	virtual G4bool ProcessHits(G4Step*, G4TouchableHistory*);
+public:
+    virtual G4bool ProcessHits(G4Step *step, G4TouchableHistory *ROhist);
 };
 
 

@@ -6,13 +6,15 @@ using namespace std;
 
 MagLensTabulatedField3D::MagLensTabulatedField3D(const char* filename)
 {
+    //Offset
+    double zoffset = -0.040;
+    //
     double lenUnit= meter;
     double fieldUnit= tesla;
 
     ifstream file(filename);
     
     file >> nx >> ny >> nz;
-    cout<<"Working fine\n";
     xField.resize( nx );
     yField.resize( nx );
     zField.resize( nx );
@@ -42,7 +44,8 @@ MagLensTabulatedField3D::MagLensTabulatedField3D(const char* filename)
         if ( ix==0 && iy==0 && iz==0 ) {
           minx = xval * lenUnit;
           miny = yval * lenUnit;
-          minz = zval * lenUnit;
+          //Offset
+          minz = (zval-zoffset) * lenUnit;
         }
         xField[ix][iy][iz] = bx * fieldUnit;
         yField[ix][iy][iz] = by * fieldUnit;
@@ -54,7 +57,8 @@ MagLensTabulatedField3D::MagLensTabulatedField3D(const char* filename)
   cout << xval << bz << zval;
   maxx = xval * lenUnit;
   maxy = yval * lenUnit;
-  maxz = zval * lenUnit;
+  //Offset
+  maxz = (zval-zoffset) * lenUnit;
 
   dx = maxx - minx;
   dy = maxy - miny;

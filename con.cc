@@ -5,10 +5,12 @@
 #include "G4UIExecutive.hh"
 #include "G4VisManager.hh"
 #include "G4VisExecutive.hh"
+#include"G4ScoringManager.hh"
 
 #include "construction.hh"
 #include "physics.hh"
 #include "action.hh"
+#include "detector.hh"
 
 
 int main(int argc, char** argv) 
@@ -35,5 +37,7 @@ int main(int argc, char** argv)
     UIManager->ApplyCommand("/vis/scene/endOfEventAction accumulate");
     
     ui->SessionStart();
+
+
     return 0;
 }
