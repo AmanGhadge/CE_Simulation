@@ -35,7 +35,10 @@ int main(int argc, char** argv)
     UIManager->ApplyCommand("/vis/viewer/set/autoRefresh true");
     UIManager->ApplyCommand("/vis/scene/add/trajectories smooth");
     UIManager->ApplyCommand("/vis/scene/endOfEventAction accumulate");
-    
+    UIManager->ApplyCommand("/vis/viewer/set/style wireframe");
+    UIManager->ApplyCommand("/vis/viewer/set/auxiliaryEdge true");
+    UIManager->ApplyCommand("/vis/viewer/set/lineSegmentsPerCircle 50");
+
     ui->SessionStart();
 
 
