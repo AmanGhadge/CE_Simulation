@@ -7,7 +7,7 @@ using namespace std;
 MagLensTabulatedField3D::MagLensTabulatedField3D(const char* filename)
 {
     //Offset
-    double zoffset = -0.040;
+    double zoffset = -0.0315;
     //
     double lenUnit= meter;
     double fieldUnit= tesla;
